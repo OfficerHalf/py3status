@@ -19,6 +19,8 @@ Format string parameters:
 
 Requires:
     python-NetworkManager
+
+@author Nathan Smith <nathan AT praisetopia.org>
 """
 
 import NetworkManager
