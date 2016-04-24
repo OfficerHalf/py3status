@@ -48,8 +48,14 @@ class Py3status:
                                 signal_name="PropertiesChanged")
 
     def _vpn_signal_handler(self, *args, **keywords):
-        print("here!")
-        #self.py3.update()
+        state = args[0].get('State', 0)
+        print("State = "+str(state), end=" ")
+        if state == 2:
+            print("CONNECTED")
+            print(self._get_vpn_status())
+        else:
+            print()
+        #self.py3.update("vpn_status")
 
     def _get_vpn_status(self):
         """Returns None if no VPN active, Id if active."""
