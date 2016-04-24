@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Drop-in replacement for i3status run_watch VPN module.
 
@@ -24,7 +25,11 @@ Requires:
 """
 
 import NetworkManager
+import dbus
 from os import path
+from dbus.mainloop.glib import DBusGMainLoop
+DBusGMainLoop(set_as_default=True)
+from gi.repository import GLib
 from time import time
 
 
@@ -32,8 +37,19 @@ class Py3status:
     # Available Configuration Parameters
     pidfile = '/sys/class/net/vpn0/dev_id'
     check_pid = False
-    cache_timeout = 10
+    cache_timeout = 0
     format = "VPN: {name}"
+
+    def __init__(self):
+        # Start event handler
+        self.loop = GLib.MainLoop()
+        self.bus = dbus.SystemBus(self.loop)
+        self.bus.add_signal_receiver(self._vpn_signal_handler, dbus_interface="org.freedesktop.NetworkManager.VPN.Connection",
+                                signal_name="PropertiesChanged")
+
+    def _vpn_signal_handler(self, *args, **keywords):
+        print("here!")
+        #self.py3.update()
 
     def _get_vpn_status(self):
         """Returns None if no VPN active, Id if active."""
@@ -73,8 +89,7 @@ class Py3status:
         full_text = self.format.format(name=name)
         response = {
             'full_text': full_text,
-            'color': color,
-            'cached_until': time() + self.cache_timeout
+            'color': color
         }
         return response
 
@@ -86,6 +101,5 @@ if __name__ == "__main__":
         'color_degraded': '#FFFF00',
         'color_good': '#00FF00'
     }
-    while True:
-        print(x.return_status([], config))
-        sleep(1)
+    print("Starting Loop.")
+    x.loop.run()
