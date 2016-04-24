@@ -7,7 +7,7 @@ using the NetworkManager python module.
 Configuration parameters:
     check_pid: If true, act just like the default i3status module.
         (default False)
-    pidfile: Path to pidfile, checked when check_pid is True.
+    pidfile: Same as i3status.conf pidfile, checked when check_pid is True.
         (default '/sys/class/net/vpn0/dev_id')
     cache_timeout: How often we refresh this module in seconds.
         (default 10)
